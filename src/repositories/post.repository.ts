@@ -1,55 +1,58 @@
-import type { CreatePostDto, PostDto } from "../dto/post.dto.js";
+import type { NewPost, Post } from "../domain/post/entity.js";
+import type { Repository } from "../domain/post/repository.js";
 
-let posts: PostDto[] = [
-  {
-    id: 1,
-    title: "Перший пост",
-    content: "Вітаю на форумі!",
-    author: "Diana",
-    category: "general",
-  },
-  {
-    id: 2,
-    title: "Вивчаю JavaScript",
-    content: "Ділюся своїм досвідом вивчення JavaScript.",
-    author: "Diana",
-    category: "programming",
-  },
-  {
-    id: 3,
-    title: "Питання про Node.js",
-    content: "З чого почати роботу з Node.js?",
-    author: "Alex",
-    category: "programming",
-  },
-];
+export function createPostRepository(): Repository {
+  const posts: Post[] = [
+    {
+      id: 1,
+      title: "Перший пост",
+      content: "Вітаю на форумі!",
+      author: "Diana",
+      category: "general",
+    },
+    {
+      id: 2,
+      title: "Вивчаю JavaScript",
+      content: "Ділюся своїм досвідом вивчення JavaScript.",
+      author: "Diana",
+      category: "programming",
+    },
+    {
+      id: 3,
+      title: "Питання про Node.js",
+      content: "З чого почати роботу з Node.js?",
+      author: "Alex",
+      category: "programming",
+    },
+  ];
 
-export function getAll(category?: string, take?: number): PostDto[] {
-  let result = posts;
+  return {
+    getAll(category?: string, take?: number): Post[] {
+      let result = posts;
 
-  if (category) {
-    result = result.filter((post) => post.category === category);
-  }
+      if (category) {
+        result = result.filter((post) => post.category === category);
+      }
 
-  if (take) {
-    result = result.slice(0, take);
-  }
+      if (take) {
+        result = result.slice(0, take);
+      }
 
-  return result;
-}
+      return result;
+    },
 
-export function getById(id: number): PostDto | undefined {
-  return posts.find((post) => post.id === id);
-}
+    getById(id: number): Post | undefined {
+      return posts.find((post) => post.id === id);
+    },
 
-export function addPost(post: CreatePostDto): Promise<PostDto> {
-  return new Promise((resolve) => {
-    const newPost: PostDto = {
-      id: posts.length + 1,
-      ...post,
-    };
+    async addPost(post: NewPost): Promise<Post> {
+      const newPost: Post = {
+        id: posts.length + 1,
+        ...post,
+      };
 
-    posts.push(newPost);
-    resolve(newPost);
-  });
+      posts.push(newPost);
+      return newPost;
+    },
+  };
 }

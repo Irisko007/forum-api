@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import * as postService from "../../services/post.service.js";
+import { postService } from "../../container.js";
 import type {
   CreatePostDto,
   ErrorDto,

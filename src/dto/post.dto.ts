@@ -1,19 +1,9 @@
 import type { ParsedQs } from "qs";
+import type { NewPost, Post } from "../domain/post/entity.js";
 
-export interface PostDto {
-  id: number;
-  title: string;
-  content: string;
-  author: string;
-  category: string;
-}
+export type PostDto = Post;
 
-export interface CreatePostDto {
-  title: string;
-  content: string;
-  author: string;
-  category: string;
-}
+export type CreatePostDto = NewPost;
 
 export interface GetPostsQueryDto extends ParsedQs {
   category?: ParsedQs[string];
