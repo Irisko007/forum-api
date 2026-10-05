@@ -1,5 +1,4 @@
 import type { RequestHandler } from "express";
-import { postService } from "../../container.js";
 import type {
   CreatePostDto,
   ErrorDto,
@@ -7,86 +6,91 @@ import type {
   GetPostsQueryDto,
   PostDto,
 } from "../../dto/post.dto.js";
+import type { PostService } from "../../services/post.types.js";
 
-export const getPosts: RequestHandler<
-  {},
-  PostDto[] | ErrorDto,
-  unknown,
-  GetPostsQueryDto
-> = (req, res) => {
-  const category = req.query.category;
-  const takeValue = req.query.take;
-  let take: number | undefined;
+export function createPostHandlers(postService: PostService) {
+  const getPosts: RequestHandler<
+    {},
+    PostDto[] | ErrorDto,
+    unknown,
+    GetPostsQueryDto
+  > = (req, res) => {
+    const category = req.query.category;
+    const takeValue = req.query.take;
+    let take: number | undefined;
 
-  if (category !== undefined && (typeof category !== "string" || category.trim() === "")) {
-    res.status(422).json({ message: "category має бути текстом" });
-    return;
-  }
-
-  if (takeValue !== undefined) {
-    if (
-      typeof takeValue !== "string" ||
-      takeValue.trim() === "" ||
-      !Number.isInteger(Number(takeValue)) ||
-      Number(takeValue) < 1
-    ) {
-      res.status(422).json({ message: "take має бути цілим числом більше 0" });
+    if (category !== undefined && (typeof category !== "string" || category.trim() === "")) {
+      res.status(422).json({ message: "category має бути текстом" });
       return;
     }
 
-    take = Number(takeValue);
-  }
+    if (takeValue !== undefined) {
+      if (
+        typeof takeValue !== "string" ||
+        takeValue.trim() === "" ||
+        !Number.isInteger(Number(takeValue)) ||
+        Number(takeValue) < 1
+      ) {
+        res.status(422).json({ message: "take має бути цілим числом більше 0" });
+        return;
+      }
 
-  const posts = postService.getAllPosts(category, take);
-  res.status(200).json(posts);
-};
+      take = Number(takeValue);
+    }
 
-export const getPostById: RequestHandler<
-  GetPostParamsDto,
-  PostDto | ErrorDto
-> = (req, res) => {
-  const id = Number(req.params.id);
+    const posts = postService.getAllPosts(category, take);
+    res.status(200).json(posts);
+  };
 
-  if (!Number.isInteger(id) || id < 1) {
-    res.status(422).json({ message: "id має бути цілим числом більше 0" });
-    return;
-  }
+  const getPostById: RequestHandler<
+    GetPostParamsDto,
+    PostDto | ErrorDto
+  > = (req, res) => {
+    const id = Number(req.params.id);
 
-  const post = postService.getPostById(id);
+    if (!Number.isInteger(id) || id < 1) {
+      res.status(422).json({ message: "id має бути цілим числом більше 0" });
+      return;
+    }
 
-  if (!post) {
-    res.status(404).json({ message: "Пост не знайдено" });
-    return;
-  }
+    const post = postService.getPostById(id);
 
-  res.status(200).json(post);
-};
+    if (!post) {
+      res.status(404).json({ message: "Пост не знайдено" });
+      return;
+    }
 
-export const createPost: RequestHandler<
-  {},
-  PostDto | ErrorDto,
-  Partial<CreatePostDto>
-> = async (req, res) => {
-  const { title, content, author, category } = req.body || {};
+    res.status(200).json(post);
+  };
 
-  if (
-    typeof title !== "string" || title.trim() === "" ||
-    typeof content !== "string" || content.trim() === "" ||
-    typeof author !== "string" || author.trim() === "" ||
-    typeof category !== "string" || category.trim() === ""
-  ) {
-    res.status(422).json({
-      message: "Потрібно передати title, content, author і category",
+  const createPost: RequestHandler<
+    {},
+    PostDto | ErrorDto,
+    Partial<CreatePostDto>
+  > = async (req, res) => {
+    const { title, content, author, category } = req.body || {};
+
+    if (
+      typeof title !== "string" || title.trim() === "" ||
+      typeof content !== "string" || content.trim() === "" ||
+      typeof author !== "string" || author.trim() === "" ||
+      typeof category !== "string" || category.trim() === ""
+    ) {
+      res.status(422).json({
+        message: "Потрібно передати title, content, author і category",
+      });
+      return;
+    }
+
+    const newPost = await postService.createPost({
+      title: title.trim(),
+      content: content.trim(),
+      author: author.trim(),
+      category: category.trim(),
     });
-    return;
-  }
 
-  const newPost = await postService.createPost({
-    title: title.trim(),
-    content: content.trim(),
-    author: author.trim(),
-    category: category.trim(),
-  });
+    res.status(201).json(newPost);
+  };
 
-  res.status(201).json(newPost);
-};
+  return { getPosts, getPostById, createPost };
+}
