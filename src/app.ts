@@ -1,10 +1,11 @@
 import express from "express";
+import { db } from "./prisma/db.js";
 import { createPostRepository } from "./repositories/post.repository.js";
 import { createPostService } from "./services/post.service.js";
 import { createPostHandlers } from "./transport/handlers/post.handler.js";
 import { createPostRouter } from "./transport/routers/post.router.js";
 
-const postRepository = createPostRepository();
+const postRepository = createPostRepository(db);
 const postService = createPostService(postRepository);
 const postHandlers = createPostHandlers(postService);
 const postRouter = createPostRouter(postHandlers);

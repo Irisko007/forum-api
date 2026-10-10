@@ -14,7 +14,7 @@ export function createPostHandlers(postService: PostService) {
     PostDto[] | ErrorDto,
     unknown,
     GetPostsQueryDto
-  > = (req, res) => {
+  > = async (req, res) => {
     const category = req.query.category;
     const takeValue = req.query.take;
     let take: number | undefined;
@@ -38,14 +38,14 @@ export function createPostHandlers(postService: PostService) {
       take = Number(takeValue);
     }
 
-    const posts = postService.getAllPosts(category, take);
+    const posts = await postService.getAllPosts(category, take);
     res.status(200).json(posts);
   };
 
   const getPostById: RequestHandler<
     GetPostParamsDto,
     PostDto | ErrorDto
-  > = (req, res) => {
+  > = async (req, res) => {
     const id = Number(req.params.id);
 
     if (!Number.isInteger(id) || id < 1) {
@@ -53,7 +53,7 @@ export function createPostHandlers(postService: PostService) {
       return;
     }
 
-    const post = postService.getPostById(id);
+    const post = await postService.getPostById(id);
 
     if (!post) {
       res.status(404).json({ message: "Пост не знайдено" });
