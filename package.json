@@ -8,7 +8,9 @@
     "start": "tsx src/server.ts",
     "typecheck": "tsc --noEmit",
     "contract:emit": "prisma contract emit",
-    "db:init": "prisma db init"
+    "db:init": "prisma db init",
+    "db:update": "prisma db update",
+    "db:verify": "prisma db verify"
   },
   "dependencies": {
     "@prisma/orm-postgres": "^8.0.0-rc.17",

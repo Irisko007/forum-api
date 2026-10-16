@@ -1,0 +1,504 @@
+{
+  "collection": "Forum API — Post categories",
+  "requests": {
+    "total": 28,
+    "pending": 0,
+    "failed": 0
+  },
+  "assertions": {
+    "total": 80,
+    "pending": 0,
+    "failed": 0
+  },
+  "failures": [],
+  "checks": [
+    {
+      "name": "Create JavaScript category",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Create TypeScript category",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Get categories",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Two categories",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Get category by id",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Category name",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Create first post",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Nested category",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Create second post",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Create third post",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Get posts with nested category",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Three posts with categories",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Get post with nested category",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Nested category",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Filter posts by category name",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Two JavaScript posts",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Filter posts by categoryId",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "One TypeScript post",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Limit filtered posts",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "One post",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Combine category filters",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "No matching posts",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "400 invalid post id",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "400 invalid category id",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "400 invalid categoryId filter",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "400 invalid categoryId in body",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "404 missing post",
+      "status": 404,
+      "assertions": [
+        {
+          "name": "HTTP 404",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "404 missing category",
+      "status": 404,
+      "assertions": [
+        {
+          "name": "HTTP 404",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "404 creating post in missing category",
+      "status": 404,
+      "assertions": [
+        {
+          "name": "HTTP 404",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "409 duplicate category",
+      "status": 409,
+      "assertions": [
+        {
+          "name": "HTTP 409",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "422 empty category name",
+      "status": 422,
+      "assertions": [
+        {
+          "name": "HTTP 422",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "422 extra category field",
+      "status": 422,
+      "assertions": [
+        {
+          "name": "HTTP 422",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "422 empty post title",
+      "status": 422,
+      "assertions": [
+        {
+          "name": "HTTP 422",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "422 extra post field",
+      "status": 422,
+      "assertions": [
+        {
+          "name": "HTTP 422",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "422 invalid query field",
+      "status": 422,
+      "assertions": [
+        {
+          "name": "HTTP 422",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "422 invalid category name filter",
+      "status": 422,
+      "assertions": [
+        {
+          "name": "HTTP 422",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "422 invalid take",
+      "status": 422,
+      "assertions": [
+        {
+          "name": "HTTP 422",
+          "passed": true
+        },
+        {
+          "name": "JSON response",
+          "passed": true
+        },
+        {
+          "name": "Error message",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "author": "Ілля",
+    "categoryId": 1,
+    "content": "Вивчаю JavaScript",
+    "id": 1,
+    "title": "Перший допис",
+    "category": {
+      "id": 1,
+      "name": "JavaScript"
+    }
+  },
+  {
+    "author": "Ілля",
+    "categoryId": 1,
+    "content": "Методи масивів у JavaScript",
+    "id": 2,
+    "title": "Масиви",
+    "category": {
+      "id": 1,
+      "name": "JavaScript"
+    }
+  },
+  {
+    "author": "Ілля",
+    "categoryId": 2,
+    "content": "Вивчаю TypeScript",
+    "id": 3,
+    "title": "Типи",
+    "category": {
+      "id": 2,
+      "name": "TypeScript"
+    }
+  }
+]

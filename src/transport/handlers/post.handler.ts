@@ -1,12 +1,13 @@
 import type { RequestHandler } from "express";
 import type {
   CreatePostDto,
-  ErrorDto,
   GetPostParamsDto,
   GetPostsQueryDto,
   PostDto,
 } from "../../dto/post.dto.js";
+import type { ErrorDto } from "../../dto/error.dto.js";
 import type { PostService } from "../../services/post.types.js";
+import { isValidId } from "../validation.js";
 
 export function createPostHandlers(postService: PostService) {
   const getPosts: RequestHandler<
@@ -16,21 +17,32 @@ export function createPostHandlers(postService: PostService) {
     GetPostsQueryDto
   > = async (req, res) => {
     const category = req.query.category;
+    const categoryIdValue = req.query.categoryId;
     const takeValue = req.query.take;
+    let categoryId: number | undefined;
     let take: number | undefined;
 
-    if (category !== undefined && (typeof category !== "string" || category.trim() === "")) {
-      res.status(422).json({ message: "category має бути текстом" });
+    if (Object.keys(req.query).some((field) => !["category", "categoryId", "take"].includes(field))) {
+      res.status(422).json({ message: "Дозволено лише category, categoryId і take" });
       return;
     }
 
+    if (category !== undefined && (typeof category !== "string" || category.trim() === "")) {
+      res.status(422).json({ message: "category має бути непорожнім текстом" });
+      return;
+    }
+
+    if (categoryIdValue !== undefined) {
+      if (!isValidId(categoryIdValue)) {
+        res.status(400).json({ message: "categoryId має бути цілим числом більше 0" });
+        return;
+      }
+
+      categoryId = Number(categoryIdValue);
+    }
+
     if (takeValue !== undefined) {
-      if (
-        typeof takeValue !== "string" ||
-        takeValue.trim() === "" ||
-        !Number.isInteger(Number(takeValue)) ||
-        Number(takeValue) < 1
-      ) {
+      if (!isValidId(takeValue)) {
         res.status(422).json({ message: "take має бути цілим числом більше 0" });
         return;
       }
@@ -38,7 +50,7 @@ export function createPostHandlers(postService: PostService) {
       take = Number(takeValue);
     }
 
-    const posts = await postService.getAllPosts(category, take);
+    const posts = await postService.getAllPosts(category?.trim(), take, categoryId);
     res.status(200).json(posts);
   };
 
@@ -46,20 +58,12 @@ export function createPostHandlers(postService: PostService) {
     GetPostParamsDto,
     PostDto | ErrorDto
   > = async (req, res) => {
-    const id = Number(req.params.id);
-
-    if (!Number.isInteger(id) || id < 1) {
-      res.status(422).json({ message: "id має бути цілим числом більше 0" });
+    if (!isValidId(req.params.id)) {
+      res.status(400).json({ message: "id має бути цілим числом більше 0" });
       return;
     }
 
-    const post = await postService.getPostById(id);
-
-    if (!post) {
-      res.status(404).json({ message: "Пост не знайдено" });
-      return;
-    }
-
+    const post = await postService.getPostById(Number(req.params.id));
     res.status(200).json(post);
   };
 
@@ -68,17 +72,29 @@ export function createPostHandlers(postService: PostService) {
     PostDto | ErrorDto,
     Partial<CreatePostDto>
   > = async (req, res) => {
-    const { title, content, author, category } = req.body || {};
+    if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
+      res.status(422).json({ message: "Потрібно передати об'єкт допису" });
+      return;
+    }
+
+    if (Object.keys(req.body).some((field) => !["title", "content", "author", "categoryId"].includes(field))) {
+      res.status(422).json({ message: "Дозволено лише title, content, author і categoryId" });
+      return;
+    }
+
+    const { title, content, author, categoryId } = req.body;
+
+    if (typeof categoryId !== "number" || !isValidId(categoryId)) {
+      res.status(400).json({ message: "categoryId має бути цілим числом більше 0" });
+      return;
+    }
 
     if (
       typeof title !== "string" || title.trim() === "" ||
       typeof content !== "string" || content.trim() === "" ||
-      typeof author !== "string" || author.trim() === "" ||
-      typeof category !== "string" || category.trim() === ""
+      typeof author !== "string" || author.trim() === ""
     ) {
-      res.status(422).json({
-        message: "Потрібно передати title, content, author і category",
-      });
+      res.status(422).json({ message: "Потрібно передати непорожні title, content і author" });
       return;
     }
 
@@ -86,7 +102,7 @@ export function createPostHandlers(postService: PostService) {
       title: title.trim(),
       content: content.trim(),
       author: author.trim(),
-      category: category.trim(),
+      categoryId,
     });
 
     res.status(201).json(newPost);

@@ -7,13 +7,10 @@ export type CreatePostDto = NewPost;
 
 export interface GetPostsQueryDto extends ParsedQs {
   category?: ParsedQs[string];
+  categoryId?: ParsedQs[string];
   take?: ParsedQs[string];
 }
 
 export interface GetPostParamsDto {
   id: string;
-}
-
-export interface ErrorDto {
-  message: string;
 }

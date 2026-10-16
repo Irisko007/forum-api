@@ -3,12 +3,18 @@ import type { PostService } from "./post.types.js";
 
 export function createPostService(repository: Repository): PostService {
   return {
-    getAllPosts(category, take) {
-      return repository.getAll(category, take);
+    getAllPosts(category, take, categoryId) {
+      return repository.getAll(category, take, categoryId);
     },
 
-    getPostById(id) {
-      return repository.getById(id);
+    async getPostById(id) {
+      const post = await repository.getById(id);
+
+      if (!post) {
+        throw new Error("POST_NOT_FOUND");
+      }
+
+      return post;
     },
 
     createPost(post) {
