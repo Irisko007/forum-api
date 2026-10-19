@@ -2,12 +2,28 @@
   "name": "forum-api",
   "version": "1.0.0",
   "description": "Простий API для постів форуму",
-  "main": "src/server.js",
+  "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "contract:emit": "prisma contract emit",
+    "db:init": "prisma db init",
+    "db:update": "prisma db update",
+    "db:verify": "prisma db verify"
   },
   "dependencies": {
+    "@prisma/orm-postgres": "^8.0.0-rc.17",
+    "dotenv": "^18.0.5",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@prisma/cli-engine": "^0.7.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.3",
+    "prisma": "^8.0.0-rc.22",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }
