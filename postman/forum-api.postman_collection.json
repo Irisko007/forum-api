@@ -1,0 +1,840 @@
+{
+  "info": {
+    "name": "Forum API — posts, categories and authors",
+    "description": "Run on a fresh database. Registers authors, creates two categories and three posts, checks filters and errors.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Register author 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"category-author-1@example.com\",\"password\":\"CategoryAuthor1!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('user1Id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Register author 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"category-author-2@example.com\",\"password\":\"CategoryAuthor2!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('user2Id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create JavaScript category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"JavaScript\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.collectionVariables.set('javascriptId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create TypeScript category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"TypeScript\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.collectionVariables.set('typescriptId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Two categories', function () { pm.expect(pm.response.json().length).to.be.at.least(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get category by id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories/{{javascriptId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Category name', function () { pm.expect(pm.response.json().name).to.equal('JavaScript'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create first post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.collectionVariables.set('postId', pm.response.json().id);",
+              "pm.test('Nested category', function () { pm.expect(pm.response.json().category.name).to.equal('JavaScript'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create second post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Масиви\",\n  \"content\": \"Методи масивів у JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create third post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Типи\",\n  \"content\": \"Вивчаю TypeScript\",\n  \"authorId\": {{user2Id}},\n  \"categoryId\": {{typescriptId}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get posts with nested category",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Three posts with categories', function () { const posts = pm.response.json(); pm.expect(posts.length).to.equal(3); posts.forEach(function (post) { pm.expect(post.category.id).to.equal(post.categoryId); pm.expect(post.category.name).to.be.a('string'); }); });",
+              "pm.test('Nested authors without passwords', function () { pm.response.json().forEach(function (post) { pm.expect(post.author.id).to.equal(post.authorId); pm.expect(post.author).not.to.have.property('password'); }); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get post with nested category",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts/{{postId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Nested category', function () { pm.expect(pm.response.json().category.name).to.equal('JavaScript'); });",
+              "pm.test('Nested author', function () { const post = pm.response.json(); pm.expect(post.author.id).to.equal(post.authorId); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Filter posts by category name",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?category=JavaScript"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Two JavaScript posts', function () { const posts = pm.response.json(); pm.expect(posts.length).to.equal(2); posts.forEach(function (post) { pm.expect(post.category.name).to.equal('JavaScript'); }); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Filter posts by categoryId",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?categoryId={{typescriptId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('One TypeScript post', function () { pm.expect(pm.response.json().length).to.equal(1); pm.expect(pm.response.json()[0].category.name).to.equal('TypeScript'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Limit filtered posts",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?categoryId={{javascriptId}}&take=1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('One post', function () { pm.expect(pm.response.json().length).to.equal(1); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Combine category filters",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?category=JavaScript&categoryId={{typescriptId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('No matching posts', function () { pm.expect(pm.response.json()).to.deep.equal([]); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "400 invalid post id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts/abc"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "400 invalid category id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories/0"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "400 invalid categoryId filter",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?categoryId=abc"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "400 invalid categoryId in body",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": -1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "404 missing post",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts/2147483647"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "404 missing category",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/categories/2147483647"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "404 creating post in missing category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": 2147483647\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "409 duplicate category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \" JavaScript \"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "422 empty category name",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"   \"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "422 extra category field",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Other\",\n  \"extra\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "422 empty post title",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"   \",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "422 extra post field",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}},\n  \"extra\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "422 invalid query field",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?unknown=value"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "422 invalid category name filter",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?category="
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "422 invalid take",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts?take=-1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('JSON response', function () { pm.response.to.be.json; });",
+              "pm.test('Error message', function () { pm.expect(pm.response.json().message).to.be.a('string'); pm.expect(pm.response.json()).not.to.have.property('stack'); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

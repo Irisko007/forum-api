@@ -1,0 +1,50 @@
+[
+    {
+        "authorId": 1,
+        "categoryId": 1,
+        "content": "Post 1 by user 1",
+        "id": 1,
+        "title": "Auth post 1",
+        "category": {
+            "id": 1,
+            "name": "Auth test 1792827036912"
+        },
+        "author": {
+            "email": "student1+1792827036912@example.com",
+            "id": 1,
+            "name": null
+        }
+    },
+    {
+        "authorId": 2,
+        "categoryId": 1,
+        "content": "Post 2 by user 2",
+        "id": 2,
+        "title": "Auth post 2",
+        "category": {
+            "id": 1,
+            "name": "Auth test 1792827036912"
+        },
+        "author": {
+            "email": "student2+1792827036912@example.com",
+            "id": 2,
+            "name": null
+        }
+    },
+    {
+        "authorId": 1,
+        "categoryId": 1,
+        "content": "Post 3 by user 1",
+        "id": 3,
+        "title": "Auth post 3",
+        "category": {
+            "id": 1,
+            "name": "Auth test 1792827036912"
+        },
+        "author": {
+            "email": "student1+1792827036912@example.com",
+            "id": 1,
+            "name": null
+        }
+    }
+]
