@@ -17,6 +17,21 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
       return;
     }
 
+    if (error.message === "AUTHOR_NOT_FOUND") {
+      res.status(404).json({ message: "Автора не знайдено" });
+      return;
+    }
+
+    if (error.message === "USER_ALREADY_EXISTS") {
+      res.status(409).json({ message: "Користувач із такою адресою вже існує" });
+      return;
+    }
+
+    if (error.message === "INVALID_CREDENTIALS") {
+      res.status(401).json({ message: "Неправильний email або пароль" });
+      return;
+    }
+
     if (error.message === "CATEGORY_ALREADY_EXISTS") {
       res.status(409).json({ message: "Категорія з такою назвою вже існує" });
       return;

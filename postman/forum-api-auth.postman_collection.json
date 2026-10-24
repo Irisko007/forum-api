@@ -1,0 +1,371 @@
+{
+  "info": {
+    "name": "Forum API — User auth",
+    "description": "Registers two users, checks JWT cookie and errors, creates three posts by two authors.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/categories",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Auth test {{runId}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('runId', Date.now().toString());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('categoryId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Register first user",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"student1+{{runId}}@example.com\",\"password\":\"FirstPass123!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('Password hidden', () => pm.expect(pm.response.json()).not.to.have.property('password'));",
+              "pm.collectionVariables.set('user1Id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Register second user",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"student2+{{runId}}@example.com\",\"password\":\"SecondPass123!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('user2Id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "409 duplicate email",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"student1+{{runId}}@example.com\",\"password\":\"FirstPass123!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "401 incorrect password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"student1+{{runId}}@example.com\",\"password\":\"WrongPass123!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login and check HttpOnly cookie",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"student1+{{runId}}@example.com\",\"password\":\"FirstPass123!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('accessToken is an HttpOnly cookie', () => { const cookie = pm.response.headers.get('Set-Cookie'); pm.expect(cookie).to.match(/^accessToken=/); pm.expect(cookie).to.include('HttpOnly'); });",
+              "pm.test('No token in body', () => pm.expect(pm.response.json()).not.to.have.property('accessToken'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create post 1 by user 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Auth post 1\",\"content\":\"Post 1 by user 1\",\"authorId\":{{user1Id}},\"categoryId\":{{categoryId}}}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('Nested author', () => { const post = pm.response.json(); pm.expect(post.author.id).to.equal(Number(pm.collectionVariables.get('user1Id'))); pm.expect(post.author).not.to.have.property('password'); });",
+              "pm.collectionVariables.set('postId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create post 2 by user 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Auth post 2\",\"content\":\"Post 2 by user 2\",\"authorId\":{{user2Id}},\"categoryId\":{{categoryId}}}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('Nested author', () => { const post = pm.response.json(); pm.expect(post.author.id).to.equal(Number(pm.collectionVariables.get('user2Id'))); pm.expect(post.author).not.to.have.property('password'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create post 3 by user 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/posts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Auth post 3\",\"content\":\"Post 3 by user 1\",\"authorId\":{{user1Id}},\"categoryId\":{{categoryId}}}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.test('Nested author', () => { const post = pm.response.json(); pm.expect(post.author.id).to.equal(Number(pm.collectionVariables.get('user1Id'))); pm.expect(post.author).not.to.have.property('password'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET posts with nested authors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Three created posts, two authors, no passwords', () => { const ids = [Number(pm.collectionVariables.get('user1Id')), Number(pm.collectionVariables.get('user2Id'))]; const posts = pm.response.json().filter(p => p.title.startsWith('Auth post ')); pm.expect(posts.length).to.be.at.least(3); pm.expect(posts.some(p => p.author.id === ids[0])).to.equal(true); pm.expect(posts.some(p => p.author.id === ids[1])).to.equal(true); posts.forEach(p => { pm.expect(p.author.id).to.equal(p.authorId); pm.expect(p.author).not.to.have.property('password'); }); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET post by id with author",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/posts/{{postId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Nested author and category', () => { const post = pm.response.json(); pm.expect(post.author.id).to.equal(post.authorId); pm.expect(post.category.id).to.equal(post.categoryId); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

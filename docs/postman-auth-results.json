@@ -1,0 +1,194 @@
+{
+  "collection": "Forum API — User auth",
+  "stats": {
+    "iterations": {
+      "total": 1,
+      "pending": 0,
+      "failed": 0
+    },
+    "items": {
+      "total": 11,
+      "pending": 0,
+      "failed": 0
+    },
+    "scripts": {
+      "total": 12,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequests": {
+      "total": 11,
+      "pending": 0,
+      "failed": 0
+    },
+    "requests": {
+      "total": 11,
+      "pending": 0,
+      "failed": 0
+    },
+    "tests": {
+      "total": 11,
+      "pending": 0,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 19,
+      "pending": 0,
+      "failed": 0
+    },
+    "testScripts": {
+      "total": 11,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequestScripts": {
+      "total": 1,
+      "pending": 0,
+      "failed": 0
+    }
+  },
+  "requests": [
+    {
+      "name": "Create category",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Register first user",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "Password hidden",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Register second user",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "409 duplicate email",
+      "status": 409,
+      "assertions": [
+        {
+          "name": "HTTP 409",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "401 incorrect password",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login and check HttpOnly cookie",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "accessToken is an HttpOnly cookie",
+          "passed": true
+        },
+        {
+          "name": "No token in body",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Create post 1 by user 1",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "Nested author",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Create post 2 by user 2",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "Nested author",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Create post 3 by user 1",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "Nested author",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "GET posts with nested authors",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Three created posts, two authors, no passwords",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "GET post by id with author",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Nested author and category",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

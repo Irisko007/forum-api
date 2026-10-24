@@ -14,12 +14,15 @@
   },
   "dependencies": {
     "@prisma/orm-postgres": "^8.0.0-rc.17",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^18.0.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.3"
   },
   "devDependencies": {
     "@prisma/cli-engine": "^0.7.0",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.3",
     "prisma": "^8.0.0-rc.22",
     "ts-node": "^10.9.2",

@@ -77,31 +77,35 @@ export function createPostHandlers(postService: PostService) {
       return;
     }
 
-    if (Object.keys(req.body).some((field) => !["title", "content", "author", "categoryId"].includes(field))) {
-      res.status(422).json({ message: "Дозволено лише title, content, author і categoryId" });
+    if (Object.keys(req.body).some((field) => !["title", "content", "authorId", "categoryId"].includes(field))) {
+      res.status(422).json({ message: "Дозволено лише title, content, authorId і categoryId" });
       return;
     }
 
-    const { title, content, author, categoryId } = req.body;
+    const { title, content, authorId, categoryId } = req.body;
 
     if (typeof categoryId !== "number" || !isValidId(categoryId)) {
       res.status(400).json({ message: "categoryId має бути цілим числом більше 0" });
       return;
     }
 
+    if (typeof authorId !== "number" || !isValidId(authorId)) {
+      res.status(400).json({ message: "authorId має бути цілим числом більше 0" });
+      return;
+    }
+
     if (
       typeof title !== "string" || title.trim() === "" ||
-      typeof content !== "string" || content.trim() === "" ||
-      typeof author !== "string" || author.trim() === ""
+      typeof content !== "string" || content.trim() === ""
     ) {
-      res.status(422).json({ message: "Потрібно передати непорожні title, content і author" });
+      res.status(422).json({ message: "Потрібно передати непорожні title і content" });
       return;
     }
 
     const newPost = await postService.createPost({
       title: title.trim(),
       content: content.trim(),
-      author: author.trim(),
+      authorId,
       categoryId,
     });
 

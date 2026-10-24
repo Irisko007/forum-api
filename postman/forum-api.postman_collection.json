@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Forum API — Post categories",
-    "description": "Запустіть на порожній БД. Створює 2 категорії та 3 дописи, перевіряє фільтри та помилки API.",
+    "name": "Forum API — posts, categories and authors",
+    "description": "Run on a fresh database. Registers authors, creates two categories and three posts, checks filters and errors.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -11,6 +11,74 @@
     }
   ],
   "item": [
+    {
+      "name": "Register author 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"category-author-1@example.com\",\"password\":\"CategoryAuthor1!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('user1Id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Register author 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"category-author-2@example.com\",\"password\":\"CategoryAuthor2!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('user2Id', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
     {
       "name": "Create JavaScript category",
       "request": {
@@ -136,7 +204,7 @@
         "url": "{{baseUrl}}/posts",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"author\": \"Ілля\",\n  \"categoryId\": {{javascriptId}}\n}",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}}\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -172,7 +240,7 @@
         "url": "{{baseUrl}}/posts",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Масиви\",\n  \"content\": \"Методи масивів у JavaScript\",\n  \"author\": \"Ілля\",\n  \"categoryId\": {{javascriptId}}\n}",
+          "raw": "{\n  \"title\": \"Масиви\",\n  \"content\": \"Методи масивів у JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}}\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -206,7 +274,7 @@
         "url": "{{baseUrl}}/posts",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Типи\",\n  \"content\": \"Вивчаю TypeScript\",\n  \"author\": \"Ілля\",\n  \"categoryId\": {{typescriptId}}\n}",
+          "raw": "{\n  \"title\": \"Типи\",\n  \"content\": \"Вивчаю TypeScript\",\n  \"authorId\": {{user2Id}},\n  \"categoryId\": {{typescriptId}}\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -242,7 +310,8 @@
             "exec": [
               "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
               "pm.test('JSON response', function () { pm.response.to.be.json; });",
-              "pm.test('Three posts with categories', function () { const posts = pm.response.json(); pm.expect(posts.length).to.equal(3); posts.forEach(function (post) { pm.expect(post.category.id).to.equal(post.categoryId); pm.expect(post.category.name).to.be.a('string'); }); });"
+              "pm.test('Three posts with categories', function () { const posts = pm.response.json(); pm.expect(posts.length).to.equal(3); posts.forEach(function (post) { pm.expect(post.category.id).to.equal(post.categoryId); pm.expect(post.category.name).to.be.a('string'); }); });",
+              "pm.test('Nested authors without passwords', function () { pm.response.json().forEach(function (post) { pm.expect(post.author.id).to.equal(post.authorId); pm.expect(post.author).not.to.have.property('password'); }); });"
             ]
           }
         }
@@ -263,7 +332,8 @@
             "exec": [
               "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
               "pm.test('JSON response', function () { pm.response.to.be.json; });",
-              "pm.test('Nested category', function () { pm.expect(pm.response.json().category.name).to.equal('JavaScript'); });"
+              "pm.test('Nested category', function () { pm.expect(pm.response.json().category.name).to.equal('JavaScript'); });",
+              "pm.test('Nested author', function () { const post = pm.response.json(); pm.expect(post.author.id).to.equal(post.authorId); });"
             ]
           }
         }
@@ -429,7 +499,7 @@
         "url": "{{baseUrl}}/posts",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"author\": \"Ілля\",\n  \"categoryId\": -1\n}",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": -1\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -506,7 +576,7 @@
         "url": "{{baseUrl}}/posts",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"author\": \"Ілля\",\n  \"categoryId\": 2147483647\n}",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": 2147483647\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -646,7 +716,7 @@
         "url": "{{baseUrl}}/posts",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"   \",\n  \"content\": \"Вивчаю JavaScript\",\n  \"author\": \"Ілля\",\n  \"categoryId\": {{javascriptId}}\n}",
+          "raw": "{\n  \"title\": \"   \",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}}\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -681,7 +751,7 @@
         "url": "{{baseUrl}}/posts",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"author\": \"Ілля\",\n  \"categoryId\": {{javascriptId}},\n  \"extra\": true\n}",
+          "raw": "{\n  \"title\": \"Перший допис\",\n  \"content\": \"Вивчаю JavaScript\",\n  \"authorId\": {{user1Id}},\n  \"categoryId\": {{javascriptId}},\n  \"extra\": true\n}",
           "options": {
             "raw": {
               "language": "json"
