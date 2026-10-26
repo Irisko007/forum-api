@@ -1,32 +1,25 @@
-# React + TypeScript + Vite
+# Форум «Коло»
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Пости завантажуються з `GET /posts` backend `forum-api` через RTK Query. Статичних постів у frontend немає.
 
-Currently, two official plugins are available:
+## Запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+У корені репозиторію:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run db:seed # додасть 3 пости лише якщо база порожня
+npm start
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+У другому терміналі:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Відкрийте адресу, яку показує Vite. Dev server пересилає `/api/posts` на `http://localhost:3000/posts`. Для backend потрібен `DATABASE_URL` у кореневому `.env` (приклад у `.env.example`).
+
+Для перевірки API: `curl http://localhost:3000/posts`. Відповідь має бути JSON-масивом. Якщо база порожня, виконайте `npm run db:seed` у корені репозиторію.

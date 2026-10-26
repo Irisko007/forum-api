@@ -1,11 +1,13 @@
 import { ForumHeader } from './components/ForumHeader';
 import { PostFeed } from './components/PostFeed';
-import { posts } from './data/posts';
+import { useGetPostsQuery } from './api/baseApi';
 import './App.css';
 
 const categories = ['Розробка', 'Навчання', 'Спільнота', 'Ідеї'];
 
 function App() {
+  const { data: posts = [], isLoading, isError } = useGetPostsQuery();
+
   return (
     <div className="site-shell" id="top">
       <ForumHeader />
@@ -46,7 +48,7 @@ function App() {
               <p>Тут є місце<br />кожному голосу.</p>
             </div>
           </aside>
-          <PostFeed posts={posts} />
+          <PostFeed posts={posts} isLoading={isLoading} isError={isError} />
         </div>
       </main>
       <footer className="footer"><span>коло<span className="brand-dot">.</span></span><span>Твоя спільнота починається з розмови.</span><a href="#top">НАГОРУ ↑</a></footer>
