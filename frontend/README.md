@@ -8,6 +8,7 @@
 
 ```bash
 npm install
+npm run db:init # для нової бази даних
 npm run db:seed # додасть 3 пости лише якщо база порожня
 npm start
 ```

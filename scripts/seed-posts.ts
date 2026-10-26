@@ -31,3 +31,5 @@ if (existingPosts.length > 0) {
   }
   console.log('Додано 3 пости у базу даних.');
 }
+
+process.exit(0);
