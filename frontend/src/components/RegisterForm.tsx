@@ -21,11 +21,9 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h3>Реєстрація</h3>
-      <div><label htmlFor="register-email">Email</label></div>
-      <input id="register-email" type="email" required {...register('email')} />
-      <div><label htmlFor="register-password">Пароль</label></div>
-      <input id="register-password" type="password" minLength={8} required {...register('password')} />
+      <h2>Реєстрація</h2>
+      <input id="register-email" type="email" placeholder="email" aria-label="Email для реєстрації" required {...register('email')} />
+      <input id="register-password" type="password" placeholder="password" aria-label="Пароль для реєстрації" minLength={8} required {...register('password')} />
       <button type="submit" disabled={isLoading}>Зареєструватися</button>
       {message && <p role="status">{message}</p>}
     </form>

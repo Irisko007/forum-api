@@ -17,11 +17,9 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h3>Авторизація</h3>
-      <div><label htmlFor="login-email">Email</label></div>
-      <input id="login-email" type="email" required {...register('email')} />
-      <div><label htmlFor="login-password">Пароль</label></div>
-      <input id="login-password" type="password" minLength={8} required {...register('password')} />
+      <h2>Авторизація</h2>
+      <input id="login-email" type="email" placeholder="email" aria-label="Email для авторизації" required {...register('email')} />
+      <input id="login-password" type="password" placeholder="password" aria-label="Пароль для авторизації" minLength={8} required {...register('password')} />
       <button type="submit" disabled={isLoading}>Увійти</button>
     </form>
   );
