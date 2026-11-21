@@ -14,6 +14,7 @@ model User {
   id       Int    @id @default(autoincrement())
   email    String @unique
   password String
+  refreshSessions RefreshSession[]
   name     String?
   posts    Post[]
 }
@@ -22,4 +23,11 @@ model Category {
   id    Int    @id @default(autoincrement())
   name  String @unique
   posts Post[]
+}
+
+model RefreshSession {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

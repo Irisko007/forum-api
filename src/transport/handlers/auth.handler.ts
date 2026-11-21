@@ -1,7 +1,23 @@
-import type { RequestHandler } from "express";
+import type { CookieOptions, RequestHandler, Response } from "express";
 import type { PublicUser } from "../../domain/user/entity.js";
 import type { ErrorDto } from "../../dto/error.dto.js";
-import type { AuthService } from "../../services/auth.types.js";
+import type { AuthService, AuthTokens } from "../../services/auth.types.js";
+
+const cookieOptions: CookieOptions = {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+};
+
+function setAuthCookies(res: Response, tokens: AuthTokens) {
+  res.cookie("accessToken", tokens.accessToken, { ...cookieOptions, maxAge: 60 * 60 * 1000 });
+  res.cookie("refreshToken", tokens.refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
+}
+
+function readRefreshToken(cookie: string | undefined): string {
+  return cookie?.match(/(?:^|;\s*)refreshToken=([^;]*)/)?.[1] ?? "";
+}
 
 interface CredentialsBody {
   email: string;
@@ -39,16 +55,23 @@ export function createAuthHandlers(authService: AuthService) {
       return;
     }
 
-    const { user, accessToken } = await authService.login(input);
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 1000,
-      path: "/",
-    });
+    const { user, ...tokens } = await authService.login(input);
+    setAuthCookies(res, tokens);
     res.status(200).json(user);
   };
 
-  return { register, login };
+  const refresh: RequestHandler = async (req, res) => {
+    const tokens = await authService.refresh(readRefreshToken(req.headers.cookie));
+    setAuthCookies(res, tokens);
+    res.sendStatus(204);
+  };
+
+  const logout: RequestHandler = async (req, res) => {
+    await authService.logout(readRefreshToken(req.headers.cookie));
+    res.clearCookie("accessToken", cookieOptions);
+    res.clearCookie("refreshToken", cookieOptions);
+    res.sendStatus(204);
+  };
+
+  return { register, login, refresh, logout };
 }

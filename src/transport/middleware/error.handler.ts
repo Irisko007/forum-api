@@ -27,6 +27,11 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
       return;
     }
 
+    if (error.message === "INVALID_REFRESH_TOKEN") {
+      res.status(401).json({ message: "Недійсний refresh token" });
+      return;
+    }
+
     if (error.message === "INVALID_CREDENTIALS") {
       res.status(401).json({ message: "Неправильний email або пароль" });
       return;

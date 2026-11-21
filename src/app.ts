@@ -9,6 +9,7 @@ import { createCategoryService } from "./services/category.service.js";
 import { createCategoryHandlers } from "./transport/handlers/category.handler.js";
 import { createCategoryRouter } from "./transport/routers/category.router.js";
 import { errorHandler } from "./transport/middleware/error.handler.js";
+import { createRefreshSessionRepository } from "./repositories/refresh-session.repository.js";
 import { createUserRepository } from "./repositories/user.repository.js";
 import { createAuthService } from "./services/auth.service.js";
 import { createAuthHandlers } from "./transport/handlers/auth.handler.js";
@@ -25,7 +26,7 @@ const categoryHandlers = createCategoryHandlers(categoryService);
 const categoryRouter = createCategoryRouter(categoryHandlers);
 
 const userRepository = createUserRepository(db);
-const authService = createAuthService(userRepository, process.env.JWT_SECRET ?? "");
+const authService = createAuthService(userRepository, createRefreshSessionRepository(db), process.env.JWT_SECRET ?? "");
 const authHandlers = createAuthHandlers(authService);
 const authRouter = createAuthRouter(authHandlers);
 
